@@ -6,9 +6,9 @@ hackshell intends to provide a means to accelerate development of the JavaScript
 hackshell provides the core execution environment for the hackdev.io IDE, enabling scripts written in the hackdev editor to execute as-is without the intermediary process of saving and uploading. hackdev's console component provides a means to directly interact with hackshell via command-line-emulator.
 
 # Installation & Building
-The project is not currently served on NPM, so now you'll need to download hackshell or `git clone` manually.
+The project is not currently served on NPM, so for now you'll need to download hackshell from GitHub or `git clone https://github.com/KuroTsuto/hackshell.git` manually.
 
-`npm install --dev` in the project root to install development dependencies, then `npm run build` to compile CommonJS and ES2015 bundles and sourcemaps to the `dist` directory. Use `npm run watch` to compile bundles on changes to source files.
+`npm install --dev` in the project root to install development dependencies, then `npm run build` to compile UMD (`hackshell.js`) and ES2015 (`hackshell.mjs`) bundles and sourcemaps to the `dist` directory. Use `npm run watch` to compile bundles on changes to source files.
 
 The resulting packages are usable in the browser and Node, assuming appropriate feature support.
 
@@ -26,6 +26,8 @@ console.log( shell.exec( '/join-0000 = chats.join { channel: "0000" }') )
 console.log( shell.exec( '/join-0000' ) )
 console.log( shell.exec( 'chats.send{ channel: "0000", msg:"Hello Scum!" }' ) )
 ```
+
+Alternately, `cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line (send a standard SIGINT with Ctrl+c to exit the cli).
 
 # Structure & Implementation
 The shell emulator works by organizing "commands" (analogous to hackmud's "scripts") defined with a name, security level, and operation into "command domains" (hackmud's "users", "corps", and... basically anything that might prefix a script name). The shell can then parse input strings and scriptors to resolve respective commands in the appropriate domain.
