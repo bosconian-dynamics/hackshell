@@ -14,6 +14,19 @@ The resulting packages are usable in the browser and Node, assuming appropriate 
 
 hackshell was written on Node v6.9.1
 
+# Basic Usage
+After loading a bundle, instantiate Shell and use the `exec` method to execute game-like input strings:
+
+```
+import {Shell} from 'hackshell'
+
+let shell = new Shell()
+
+console.log( shell.exec( '/join-0000 = chats.join { channel: "0000" }') )
+console.log( shell.exec( '/join-0000' ) )
+console.log( shell.exec( 'chats.send{ channel: "0000", msg:"Hello Scum!" }' ) )
+```
+
 # Structure & Implementation
 The shell emulator works by organizing "commands" (analogous to hackmud's "scripts") defined with a name, security level, and operation into "command domains" (hackmud's "users", "corps", and... basically anything that might prefix a script name). The shell can then parse input strings and scriptors to resolve respective commands in the appropriate domain.
 
