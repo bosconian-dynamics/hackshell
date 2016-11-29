@@ -6,12 +6,11 @@
   "jsnext:main": "dist/hackshell.mjs",
   "module": "dist/hackshell.mjs",
   "scripts": {
-    "prebuild": "eslint lib test",
+    "prebuild": "eslint lib",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "pretest": "npm run build",
-    "test": "mocha",
-    "prepublish": "npm test"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
