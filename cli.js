@@ -37,7 +37,32 @@ stdio.prompt()
 
 stdio
   .on( 'line', input => {
-    writeOut( shell.exec( input ), true )
+    let result = shell.exec( input )
+
+    if( "object" === typeof result && !(result instanceof Array) ) {
+      let props = Object.getOwnPropertyNames( result )
+
+      switch( props.length ) {
+        case 1:
+          if( props[0] === "ok" )
+            result = result.ok ? Shell.messages.success() : Shell.messages.failure()
+          break
+
+        case 2:
+          if( props.every( prop => [ "ok", "msg" ].includes( prop ) ) ) {
+            result = [
+              result.ok ? Shell.messages.success() : Shell.messages.failure(),
+              result.msg
+            ]
+          }
+          break
+      }
+    }
+
+    if( result instanceof Array )
+      result = result.join( '\n' )
+
+    writeOut( result, true )
   })
   .on('close', () => {
     writeOut( '-terminal poweroff-' )

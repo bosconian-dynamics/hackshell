@@ -209,7 +209,7 @@ describe( 'hackmud emulation', function() {
           expect( result.msg ).to.be( "channel test is taken" )
         })
 
-        it( 'returns {ok:false, msg:"channel <channel name> is taken"} when already in 5 channels', function() {
+        it( 'returns {ok:false, msg:"you cannot create any more channels"} when already in 5 channels', function() {
           chatController.joinedChannels.push( "0000", "111111", "222222", "333333", "444444" )
 
           let result = shell.exec( 'chats.create {name: "test"}' )
