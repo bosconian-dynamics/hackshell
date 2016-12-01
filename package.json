@@ -6,11 +6,12 @@
   "jsnext:main": "dist/hackshell.mjs",
   "module": "dist/hackshell.mjs",
   "scripts": {
-    "prebuild": "eslint lib",
+    "prebuild": "eslint lib test",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "pretest": "npm run build",
-    "test": "mocha"
+    "test": "mocha",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
@@ -26,11 +27,10 @@
   "author": "Adam Bosco",
   "homepage": "https://github.com/kurotsuto/hackshell#readme",
   "license": "LGPL-2.1",
-  "engines" : {
-    "node" : ">=6.9"
+  "engines": {
+    "node": ">=6.9"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "babel-plugin-external-helpers": "^6.8.0",
@@ -38,6 +38,7 @@
     "babel-register": "^6.11.6",
     "babelrc-rollup": "^3.0.0",
     "eslint": "^3.2.2",
+    "expect.js": "^0.3.1",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
     "rollup": "^0.34.7",

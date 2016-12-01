@@ -57,6 +57,8 @@ Instances of CommandArgument verbosely describe a single parameter (or property 
 # Contributing
 Currently, hackshell does a commendable job at emulating hackmud's shell environment - the principal of the remaining work is in fleshing out the standard scripts and writing tests (via mocha).
 
+## Commands
 The Chats CommandDomain accurately simulates the in-game chat scripts (with the limitations of multiple users and password-protected channels), however the remaining trusts scripts have yet to be implemented. `lib/commands/Chats.js` serves as a good reference for Command and CommandDomain implementation.
 
-I'd be happy to look over pull requests for missing Commands, tests describing existing or missing in-game script use-cases, and anything addressing TODOs. Or anything else really :)
+## Tests
+hackshell needs various additional tests. In particular, tests for non-implemented Commands would be particularly useful and serve to create a specification for Command implementation. Expected values can be easily extrapolated from the game - simply run a possible test case for a script in hackmud and see what it spits back.

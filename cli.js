@@ -1,5 +1,6 @@
 /**
  * Command Line Interface for using hackshell from a console
+ * TODO: hackmud-esque ouput formatting & auto-coloring
  */
 var readline  = require( 'readline' )
 var Shell     = require( './dist/hackshell.js' ).Shell
@@ -39,6 +40,6 @@ stdio
     writeOut( shell.exec( input ), true )
   })
   .on('close', () => {
-    writeOut( 'Shutdown' )
+    writeOut( '-terminal poweroff-' )
     process.exit(0);
   });
