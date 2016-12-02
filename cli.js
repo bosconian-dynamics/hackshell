@@ -3,7 +3,51 @@
  * TODO: hackmud-esque ouput formatting & auto-coloring
  */
 var readline  = require( 'readline' )
-var Shell     = require( './dist/hackshell.js' ).Shell
+var hackshell = require( './dist/hackshell.js' )
+
+var Shell           = hackshell.Shell
+var Command         = hackshell.Command
+var CommandArgument = hackshell.CommandArgument
+
+//TODO: these commands are terribly hackish, and possibly fail to emulate hackmud behaviors
+Shell.COMMANDS.push(
+  class ShutdownCommand extends Command {
+    constructor( shell ) {
+      super(
+        "shutdown"
+      )
+
+      this.shell = shell
+    }
+
+    operation( context, args ) {
+      if( args )
+        return Shell.messages.noScript( `${this.shell.username}.${this.name}` )
+
+      writeOut( '-terminal poweroff-' )
+      process.exit(0);
+    }
+  }
+)
+
+Shell.COMMANDS.push(
+  class ClearCommand extends Command {
+    constructor( shell ) {
+      super(
+        'clear'
+      )
+
+      this.shell = shell
+    }
+
+    operation( context, args ) {
+      if( args )
+        return Shell.messages.noScript( `${this.shell.username}.${this.name}` )
+
+      console.log( '\r\n'.repeat( process.stdout.getWindowSize()[1] ) )
+    }
+  }
+)
 
 function writeOut( message, moveCursor = false ) {
   stdio.pause()
@@ -39,6 +83,9 @@ stdio
   .on( 'line', input => {
     let result = shell.exec( input )
 
+    if( !result )
+      return writeOut( "", true )
+
     if( "object" === typeof result && !(result instanceof Array) ) {
       let props = Object.getOwnPropertyNames( result )
 
@@ -65,6 +112,5 @@ stdio
     writeOut( result, true )
   })
   .on('close', () => {
-    writeOut( '-terminal poweroff-' )
-    process.exit(0);
+    shell.executeCommand( Shell.DEFAULT_DOMAIN, 'shutdown' )
   });

@@ -27,7 +27,7 @@ console.log( shell.exec( '/join-0000' ) )
 console.log( shell.exec( 'chats.send{ channel: "0000", msg:"Hello Scum!" }' ) )
 ```
 
-Alternately, `cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line (send a standard SIGINT with Ctrl+c to exit the cli).
+Alternately, `cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line. To exit the CLI, either execute the `shutdown` command as you would in-game, or send a standard SIGINT (<key>Ctrl</key>+<key>c</key> in most environments). 
 
 # Structure & Implementation
 The shell emulator works by organizing "commands" (analogous to hackmud's "scripts") defined with a name, security level, and operation into "command domains" (hackmud's "users", "corps", and... basically anything that might prefix a script name). The shell can then parse input strings and scriptors to resolve respective commands in the appropriate domain.
