@@ -16,12 +16,15 @@ hackshell was written on Node v6.9.1
 
 # Basic Usage
 ## Command Line
-`cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line. To exit the CLI, either execute the `shutdown` command as you would in-game, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
+`cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line, then pass and execute input as you would in-game. To exit the CLI, either execute the `shutdown` command, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
 
 ```shell-script
 $node cli
 > user an1k3t0s
 Active user is now an1k3t0s
+
+> scripts.get_level { name: "chats.join" }
+NULLSEC
 
 > /join0 = chats.join { channel: "0000" }
 Macro created: join0 = chats.join { channel: "0000" }
@@ -68,7 +71,7 @@ shell.setOutputHandler( message => {
 ## Modules
 If you're working in an environment that supports ES2015 and the spread operator, you can import hackshell modules directly (useful when you'd like your own build process to handle optimizations and transpilation):
 
-```
+```node
 import {Shell, Command, controllers} from 'hackshell/lib'
 ```
 
@@ -88,11 +91,68 @@ For example, the in-game script "chats.tell" is emulated with a "TellCommand" Co
 When the Chats CommandDomain is then registered with the Shell, the Shell is then able to resolve "chats.tell" within a scriptor or input string to the TellCommand instance in the registered Chats instance - and subsequently execute it's operation or retrieve it's security level.
 
 ## Command
-The Command class represents a single in-game script. It contains the name of the script, it's security level, a usage string, an "operation" function representing the actual functionality of the command, and a number of CommandArguments describing the parameters which the operation might utilize within the `args` object.
+The `Command` class represents a single in-game script. It contains the name of the script, it's security level, a usage string, an `operation()` method representing the actual function of the command, and a number of `CommandArgument`s describing the parameters which the operation might utilize within the `args` object.
 
-In general, a single command is described by extending the Command Class and overwriting the constructor and `operation` methods. The command's name and an object of arguments including security level, usage string, and CommandArguments will then be passed to the call to `super` within the constructor.
+In general, a single in-game script is described by extending the `Command` class and overriding the constructor and `operation()` methods. The command's name and an object of options will then be passed to the call to `super()` within the constructor.
 
-State shared among multiple Commands best resides in a common CommandDomain, however state relevant only to one command can logically be added to a Command class via properties and methods.
+State utilized by multiple `Command`s best resides in their common `CommandDomain`, however state relevant only to one `Command` can logically be added to a `Command` class via properties and methods.
+
+Take hackshell's simulation of `chats.send`, for example:
+
+```node
+// chats.send
+class SendCommand extends Command {
+  constructor( chatSim ) {
+    /*
+     * Here, we define the properties of the in-game script within the call to super(). SendCommand
+     * represents the in-game script chats.send, so we specify "send" as the name argument.
+     */
+    super(
+      "send",
+      {
+        securityLevel: 4, // FULLSEC (See Scripts.SECURITY_LEVEL_NAMES)
+        usage: 'chats.send { channel:"<channel name>", msg:"<message (1000/10)>" }',
+        args: [
+          new CommandArgument(
+            "channel",
+            [ "string" ],
+            true
+          ),
+          new CommandArgument(
+            "msg",
+            [ "string" ],
+            true
+          )
+        ]
+      }
+    )
+
+    this.chatSim = chatSim
+  }
+
+  /*
+   * When something calls SendCommand.execute( <context object>, <arguments object> ), the
+   * the arguments object will be validated against the CommandArguments specified in the
+   * constructor. If any argument fails validation, a usage response will be returned. If
+   * validation is successful, this "operation" method will be executed and it's return value
+   * returned to whatever called originally called .execute
+   */
+  operation( context, args ) {
+    let {channel, msg} = args
+
+    if( !this.chatSim.hasJoinedChannel( channel ) )
+      return {ok:false, msg:`you aren't in ${channel}. join channel with chats.join`}
+
+    this.chatSim.dispatchMessage( channel, context.caller, msg )
+
+    return "Msg Sent"
+  }
+}
+```
+
+Here, `chatSim` is an instance of the `Chats` `CommandDomain`, which includes utility methods for sending messages to output and managing channels. `chats.send`'s functionality is only dependent on the state of the larger chat simulation, so `SendCommand` implements no additional methods of it's own, instead relying on the helper methods provided by the `Chats` `CommandDomain` (i.e. `hasJoinedChannel()` and `dispatchMessage()`).
+
+Since a `usage` string and array of `CommandArgument`s (`options.args`) were passed to `Command`'s constructor in the call to `super()`, `SendCommand` will automatically return it's usage string in the correct format when necessary. In this case, since both `CommandArgument`s were constructed with their `required` parameter set to `true`, `SendCommand` will return just the usage string if it receives no arguments, and an object consisting of `{ok:false, msg:<usage string>}` if arguments were supplied but one or both of the required properties are missing. Since both also specify a basic `"string"` validator, `SendCommand` will also return the aforementioned object when arguments are supplied, but either of the defined arguments are not a string.
 
 ## CommandArgument
 Instances of CommandArgument verbosely describe a single parameter (or property on the args object) that a Command's operation might use by collecting the parameter's name, whether or not it's required, and any possible validation criteria. This allows hackshell to easily simulate script usage standards in a manner consistent with hackmud's standard scripts without repeating type checks and validation flow for each individual script.
