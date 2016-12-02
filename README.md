@@ -15,19 +15,35 @@ The resulting packages are usable in the browser and Node, assuming appropriate 
 hackshell was written on Node v6.9.1
 
 # Basic Usage
-After loading a bundle, instantiate Shell and use the `exec` method to execute game-like input strings:
+## Command Line
+`cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line. To exit the CLI, either execute the `shutdown` command as you would in-game, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
+
+## Bundles
+Import or require hackshell as you would any other package. If you're using a module bundler that recognizes the `"module"` or `"jsnext:main"` fields in `package.json` it should automatically select the proper hackshell bundle. Then instantiate Shell and use the `exec` method to execute game-like input strings and retrieve the return values:
 
 ```
-import {Shell} from 'hackshell'
-
-let shell = new Shell()
+var hackshell = require( 'hackshell' )
+var shell = new hackshell.Shell()
 
 console.log( shell.exec( '/join-0000 = chats.join { channel: "0000" }') )
 console.log( shell.exec( '/join-0000' ) )
 console.log( shell.exec( 'chats.send{ channel: "0000", msg:"Hello Scum!" }' ) )
 ```
 
-Alternately, `cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line. To exit the CLI, either execute the `shutdown` command as you would in-game, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments). 
+You may also specify an output handler callback to deal with asynchronous output (like chat messages):
+
+```
+shell.setOutputHandler( message => {
+  console.log( '[async hackshell output]: ' + message )
+})
+```
+
+## Modules
+If you're working in an environment that supports ES2015 and the spread operator, you can import hackshell modules directly (useful when you'd like your own build process to handle optimizations and transpilation):
+
+```
+import {Shell, Command, controllers} from 'hackshell/lib'
+```
 
 # Structure & Implementation
 The shell emulator works by organizing "commands" (analogous to hackmud's "scripts") defined with a name, security level, and operation into "command domains" (hackmud's "users", "corps", and... basically anything that might prefix a script name). The shell can then parse input strings and scriptors to resolve respective commands in the appropriate domain.
