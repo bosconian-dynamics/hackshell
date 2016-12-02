@@ -18,10 +18,33 @@ hackshell was written on Node v6.9.1
 ## Command Line
 `cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line. To exit the CLI, either execute the `shutdown` command as you would in-game, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
 
-## Bundles
-Import or require hackshell as you would any other package. If you're using a module bundler that recognizes the `"module"` or `"jsnext:main"` fields in `package.json` it should automatically select the proper hackshell bundle. Then instantiate Shell and use the `exec` method to execute game-like input strings and retrieve the return values:
+```shell-script
+$node cli
+> user an1k3t0s
+Active user is now an1k3t0s
 
+> /join0 = chats.join { channel: "0000" }
+Macro created: join0 = chats.join { channel: "0000" }
+
+> /join0
+chats.join { channel: "0000" }
+Success
+
+1652 0000 an1k3t0s :::user joined channel:::
+> chats.send { channel: "0000", msg: "Hello, Scum!" }
+Msg Sent
+
+1652 0000 an1k3t0s :::Hello, Scum!:::
+> shutdown
+-terminal poweroff-
+
+$
 ```
+
+## Bundles
+Import or require hackshell as you would any other package. If you're using a module bundler that recognizes the `"module"` or `"jsnext:main"` fields in `package.json` it should automatically select the proper hackshell bundle - otherwise it will select the basic UMD bundle by default. Then instantiate Shell and use the `exec` method to execute game-like input strings and retrieve the return values:
+
+```node
 var hackshell = require( 'hackshell' )
 var shell = new hackshell.Shell()
 
@@ -29,14 +52,14 @@ function execLog( input ) {
   console.log( shell.exec( input ) )
 }
 
-execLog( '/join-0000 = chats.join { channel: "0000" }' )
-execLog( '/join-0000' )
+execLog( '/join0 = chats.join { channel: "0000" }' )
+execLog( '/join0' )
 execLog( 'chats.send{ channel: "0000", msg:"Hello, Scum!" }' )
 ```
 
 You may also specify an output handler callback to deal with asynchronous output (like chat messages):
 
-```
+```node
 shell.setOutputHandler( message => {
   console.log( '[async hackshell output]: ' + message )
 })

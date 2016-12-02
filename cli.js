@@ -49,10 +49,10 @@ Shell.COMMANDS.push(
   }
 )
 
-function writeOut( message, moveCursor = false ) {
+function writeOut( message, moveCursor = false, spacer = true ) {
   stdio.pause()
   readline.cursorTo( process.stdout, 0 )
-  process.stdout.write( message + '\n\n' )
+  process.stdout.write( message + '\n' + (spacer ? '\n' : '') )
 
   if( moveCursor )
     stdio.prompt( true )
@@ -61,7 +61,7 @@ function writeOut( message, moveCursor = false ) {
 }
 
 var shell = new Shell({
-  outputHandler: message => writeOut( message, true ),
+  outputHandler: message => writeOut( message, true, false ),
   chatDelay: 300
 })
 
@@ -84,7 +84,7 @@ stdio
     let result = shell.exec( input )
 
     if( !result )
-      return writeOut( "", true )
+      return writeOut( "", true, false )
 
     if( "object" === typeof result && !(result instanceof Array) ) {
       let props = Object.getOwnPropertyNames( result )
