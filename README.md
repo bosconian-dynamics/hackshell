@@ -25,9 +25,13 @@ Import or require hackshell as you would any other package. If you're using a mo
 var hackshell = require( 'hackshell' )
 var shell = new hackshell.Shell()
 
-console.log( shell.exec( '/join-0000 = chats.join { channel: "0000" }') )
-console.log( shell.exec( '/join-0000' ) )
-console.log( shell.exec( 'chats.send{ channel: "0000", msg:"Hello Scum!" }' ) )
+function execLog( input ) {
+  console.log( shell.exec( input ) )
+}
+
+execLog( '/join-0000 = chats.join { channel: "0000" }' )
+execLog( '/join-0000' )
+execLog( 'chats.send{ channel: "0000", msg:"Hello, Scum!" }' )
 ```
 
 You may also specify an output handler callback to deal with asynchronous output (like chat messages):
