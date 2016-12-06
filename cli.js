@@ -10,7 +10,7 @@ var Shell           = hackshell.Shell
 var Command         = hackshell.Command
 var CommandArgument = hackshell.CommandArgument
 
-//TODO: these commands are terribly hackish, and possibly fail to emulate hackmud behaviors
+//TODO: these commands are terribly hackish, and possibly fail to emulate hackmud behaviors. Also shouldn't really be pushed to Shell.COMMANDS.
 Shell.COMMANDS.push(
   class ShutdownCommand extends Command {
     constructor( shell ) {
@@ -59,15 +59,6 @@ function writeOut( message, moveCursor = false, spacer = true ) {
     stdio.prompt( true )
 
   stdio.resume()
-}
-
-function loadUserScripts( shell ) {
-  let scriptsDir
-
-  switch( process.platform ) {
-    case "win32":
-      
-  }
 }
 
 var shell = new Shell({
