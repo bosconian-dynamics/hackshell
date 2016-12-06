@@ -78,7 +78,7 @@ import {Shell, Command, controllers} from 'hackshell/lib'
 # Structure & Implementation
 The shell emulator works by organizing "commands" (analogous to hackmud's "scripts") defined with a name, security level, and operation into "command domains" (hackmud's "users", "corps", and... basically anything that might prefix a script name). The shell can then parse input strings and scriptors to resolve respective commands in the appropriate domain.
 
-The emulator is composed of four basic classes.
+The emulator is composed of five basic classes.
 
 ## Shell
 The Shell class is responsible for interpreting input, maintaining macro definitions, organizing command domains, and executing commands and macros. Of particular note, it composes the context object passed to every command's operation function on execution.
@@ -156,6 +156,38 @@ Since a `usage` string and array of `CommandArgument`s (`options.args`) were pas
 
 ## CommandArgument
 Instances of CommandArgument verbosely describe a single parameter (or property on the args object) that a Command's operation might use by collecting the parameter's name, whether or not it's required, and any possible validation criteria. This allows hackshell to easily simulate script usage standards in a manner consistent with hackmud's standard scripts without repeating type checks and validation flow for each individual script.
+
+## UserScript
+`UserScript`s are `Commands`s which represent user-implemented functions, analogous to scripts created by users in hackmud. Constructed with a name and a string containing the script's function-body (or a callback which returns such a string), the `UserScript` class is capable of dynamically determining the function's security-level by examining a dependency graph created from the scriptors (references to other `Commands` in the format `#s.<domain name>.<command name>`) contained in the function body.
+
+Instead of calling a pre-defined `operation()` method when `execute()`ed, `UserScripts` evaluate the given function body by inserting it into a `new Function()` constructor. Scriptors contained in the function body are replaced with IIFEs which execute the respective `Command`s.
+
+Measures are taken to prevent infinite pre-processing and evaluation as well as security level calculations in the case of recursive scriptor dependencies (e.g. a `UserScript` will not evaluate it's function body more than once per execution stack).
+
+A `UserScript` which represents and executes a hackmud script file can thus be implemented as such:
+```node
+var fs        = require( 'fs' )
+var hackshell = require( 'hackshell' )
+
+var Shell      = hackshell.Shell
+var UserScript = hackshell.UserScript
+
+var username = 'an1k3t0s'
+var shell    = new Shell()
+
+var myScriptCommand = new UserScript(
+  'myscript',
+  function() {
+    return fs.readFileSync( 'path/to/myscript.js', {encoding: 'utf8'} )
+  },
+  shell
+)
+
+shell.setUser( username )
+shell.setCommand( 'myscript', myScriptCommand )
+```
+
+After which, `shell.exec( 'myscript {some: "argument", digit: 1}' )` would execute as expected, and `myScriptCommand.getSecurityLevel()` or `shell.exec( 'scripts.get_level {name: "an1k3t0s.myscript"}' )` would return a security level respective of the scriptors used in the file `myscript.js`.
 
 # Contributing
 Currently, hackshell does a commendable job at emulating hackmud's shell environment - the principal of the remaining work is in fleshing out the standard scripts and writing tests (via mocha).
