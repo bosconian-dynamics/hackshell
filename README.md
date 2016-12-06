@@ -110,7 +110,8 @@ class SendCommand extends Command {
     super(
       "send",
       {
-        securityLevel: 4, // FULLSEC (See Scripts.SECURITY_LEVEL_NAMES)
+        securityLevel: Command.SECURTIY_LEVELS.FULLSEC,
+        accessLevel:   Command.ACCESS_LEVELS.TRUST,
         usage: 'chats.send { channel:"<channel name>", msg:"<message (1000/10)>" }',
         args: [
           new CommandArgument(
@@ -191,6 +192,10 @@ After which, `shell.exec( 'myscript {some: "argument", digit: 1}' )` would execu
 
 # Contributing
 Currently, hackshell does a commendable job at emulating hackmud's shell environment - the principal of the remaining work is in fleshing out the standard scripts and writing tests (via mocha).
+
+However, the overall structure and implementation of hackshell should be considered **unstable** - much refactoring is still likely to occur, particularly with regards to more complicated functionality such as the scriptor substitution and security calculations performed by `UserScript`. In short, many things can and should be done better.
+
+Many files contain a good number of `// TODO` comments regarding things not yet implemented, not tested or checked against in-game behaviors, or implemented poorly.
 
 ## Commands
 The Chats CommandDomain accurately simulates the in-game chat scripts (with the limitations of multiple users and password-protected channels), however the remaining trusts scripts have yet to be implemented. `lib/commands/Chats.js` serves as a good reference for Command and CommandDomain implementation.
