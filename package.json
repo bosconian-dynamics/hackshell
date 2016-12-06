@@ -1,6 +1,6 @@
 {
   "name": "hackshell",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "An emulator for the shell environment used in Drizzly Bear's game 'h a c k m u d'",
   "main": "dist/hackshell.js",
   "jsnext:main": "dist/hackshell.mjs",

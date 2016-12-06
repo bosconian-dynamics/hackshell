@@ -1,6 +1,7 @@
 /**
  * Command Line Interface for using hackshell from a console
  * TODO: hackmud-esque ouput formatting & auto-coloring
+ * TODO: restructure this. All of it.
  */
 var readline  = require( 'readline' )
 var hackshell = require( './dist/hackshell.js' )
@@ -58,6 +59,15 @@ function writeOut( message, moveCursor = false, spacer = true ) {
     stdio.prompt( true )
 
   stdio.resume()
+}
+
+function loadUserScripts( shell ) {
+  let scriptsDir
+
+  switch( process.platform ) {
+    case "win32":
+      
+  }
 }
 
 var shell = new Shell({
