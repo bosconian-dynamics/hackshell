@@ -8,18 +8,30 @@ hackshell provides the core execution environment for the hackdev.io IDE, enabli
 # Installation & Building
 The project is not currently served on NPM, so for now you'll need to download hackshell from GitHub or `git clone https://github.com/KuroTsuto/hackshell.git` manually.
 
-`npm install --dev` in the project root to install development dependencies, then `npm run build` to compile UMD (`hackshell.js`) and ES2015 (`hackshell.mjs`) bundles and sourcemaps to the `dist` directory. Use `npm run watch` to compile bundles on changes to source files.
+Execute `npm install --dev` in the project root to install development dependencies.
 
-The resulting packages are usable in the browser and Node, assuming appropriate feature support.
+If you only wish to use hackshell on the command line via `cli.js`, build the command line bundle with `npm run build-cli`. The resulting bundle `dist/hackshell-cli.js` is in a CommonJS format only suitable for use in Node.
+
+Library bundles can be built to the `dist` directory using `npm run build` - this will produce two bundles in UMD (`hackshell.js`) and ES2015 (`hackshell.mjs`) formats, suitable for use in both Node as well as web browsers.
+
+You can learn more about hackshell bundles and the build process in the [hackshell wiki](https://github.com/KuroTsuto/hackshell/wiki/About-the-Build-Process).
 
 hackshell was written on Node v6.9.1
 
 # Basic Usage
 ## Command Line
-`cli.js` provides a basic command line interface. Run `node cli` in the project root to start the command line, then pass and execute input as you would in-game. To exit the CLI, either execute the `shutdown` command, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
+`cli.js` provides a basic command line interface. Before you can use the CLI, you'll need to build the CLI bundle - see **Installation & Building** above.
+
+Run `node cli` in the project root to start the command line, then pass and execute input as you would in-game. To exit the CLI, either execute the `shutdown` command, or send a standard SIGINT (<kbd>ctrl</kbd>+<kbd>c</kbd> in most environments).
 
 ```shell-script
 $node cli
+-terminal active-
+
+Usage: user <username>
+Your users: an1k3t0s, hackdev (2/2)
+Retired users:  (0/10)
+
 > user an1k3t0s
 Active user is now an1k3t0s
 
@@ -44,8 +56,10 @@ Msg Sent
 $
 ```
 
+The hackshell CLI will attempt to locate your hackmud data directory and use it to determine available users (currently for Windows users only). When you select a pre-existing game user on the CLI, hackshell will generate dynamic UserScript commands for all of the game-scripts found in that user's data-directory. This enables user scripts to be executed immediately without any further work. These bindings read the script file each time it is executed (or it's security level checked), meaning any changes you make to your script can be seen in hackshell as soon as you save the file - no `#up` or CLI restart required.
+
 ## Bundles
-Import or require hackshell as you would any other package. If you're using a module bundler that recognizes the `"module"` or `"jsnext:main"` fields in `package.json` it should automatically select the proper hackshell bundle - otherwise it will select the basic UMD bundle by default. Then instantiate Shell and use the `exec` method to execute game-like input strings and retrieve the return values:
+Import or require hackshell as you would any other package. If you're using a module bundler that recognizes the `"module"` or `"jsnext:main"` fields in `package.json` it should automatically select the proper hackshell bundle - otherwise it will select the UMD bundle by default. Then instantiate Shell and use the `exec` method to execute game-like input strings and retrieve the return values:
 
 ```node
 var hackshell = require( 'hackshell' )

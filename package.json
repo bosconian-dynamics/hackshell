@@ -1,17 +1,23 @@
 {
   "name": "hackshell",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "An emulator for the shell environment used in Drizzly Bear's game 'h a c k m u d'",
   "main": "dist/hackshell.js",
   "jsnext:main": "dist/hackshell.mjs",
   "module": "dist/hackshell.mjs",
   "scripts": {
     "prebuild": "eslint lib test",
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
+    "build": "rollup -c build/lib.rollup.config.js",
+    "build-cli": "rollup -c build/cli.rollup.config.js",
+    "watch": "rollup -c build/lib.rollup.config.js -w",
     "pretest": "npm run build",
     "test": "mocha",
     "prepublish": "npm test"
+  },
+  "bin": "./cli.js",
+  "directories": {
+    "lib": "lib",
+    "dist": "dist"
   },
   "repository": {
     "type": "git",
